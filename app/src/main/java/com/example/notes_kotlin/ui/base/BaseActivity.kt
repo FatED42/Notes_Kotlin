@@ -9,33 +9,58 @@ import androidx.lifecycle.Observer
 import com.example.notes_kotlin.R
 import com.example.notes_kotlin.data.errors.NoAuthException
 import com.firebase.ui.auth.AuthUI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 import androidx.lifecycle.R as R1
 
-abstract class BaseActivity<T, S: BaseViewState<T>>: AppCompatActivity() {
+abstract class BaseActivity<S>: AppCompatActivity(), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext by lazy {
+        Dispatchers.Main + Job()
+    }
 
     companion object{
         private const val RC_SIGN_IN = 9698
     }
 
-    abstract val viewModel: BaseViewModel<T, S>
+    abstract val viewModel: BaseViewModel<S>
     abstract val layoutRes: Int?
+
+    private lateinit var dataJob: Job
+    private lateinit var errorJob: Job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layoutRes ?.let {
             setContentView(it)
         }
-        viewModel.getViewState().observe(this, Observer {state ->
-            state ?: return@Observer
-            state.error?.let {
-                renderError(it)
-                return@Observer
-            }
-            renderData(state.data)
-        })
     }
 
-    abstract fun renderData(data: T)
+    override fun onStart() {
+        super.onStart()
+        dataJob = launch {
+            viewModel.getViewState().consumeEach {
+                renderData(it)
+            }
+        }
+        errorJob = launch {
+            viewModel.getErrorChannel().consumeEach {
+                renderError(it)
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        dataJob.cancel()
+        errorJob.cancel()
+    }
+
+    abstract fun renderData(data: S)
 
     protected fun renderError(error: Throwable){
         when(error){

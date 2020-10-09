@@ -16,7 +16,7 @@ import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.LogoutListener {
+class MainActivity : BaseActivity<List<Note>?>(), LogoutDialog.LogoutListener {
 
     companion object{
         fun start(context: Context) = Intent(context, MainActivity::class.java).apply {
@@ -25,7 +25,6 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.Lo
     }
 
     override val viewModel: MainViewModel by viewModel()
-
     override val layoutRes: Int = R.layout.activity_main
     lateinit var adapter: NotesRVAdapter
 
@@ -59,7 +58,7 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.Lo
             else -> false
         }
 
-    fun showLogoutDialog() {
+    private fun showLogoutDialog() {
         supportFragmentManager.findFragmentByTag(LogoutDialog.TAG) ?:
         LogoutDialog().show(supportFragmentManager, LogoutDialog.TAG)
     }

@@ -5,7 +5,7 @@ import androidx.core.content.ContextCompat
 import com.example.notes_kotlin.R
 import com.example.notes_kotlin.data.entity.Note
 
-inline fun Note.Color.getColorRes() = when(this){
+fun Note.Color.getColorRes() = when(this){
     Note.Color.WHITE -> R.color.white
     Note.Color.VIOLET -> R.color.violet
     Note.Color.YELLOW -> R.color.yellow
@@ -14,4 +14,4 @@ inline fun Note.Color.getColorRes() = when(this){
     Note.Color.GREEN -> R.color.green
 }
 
-inline fun Note.Color.getColorInt(context: Context) = ContextCompat.getColor(context, getColorRes())
+fun Note.Color.getColorInt(context: Context) = ContextCompat.getColor(context, getColorRes())

@@ -4,7 +4,7 @@ import com.example.notes_kotlin.ui.base.BaseActivity
 import com.example.notes_kotlin.ui.main.MainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class SplashActivity : BaseActivity<Boolean?, SplashViewState>() {
+class SplashActivity : BaseActivity<Boolean?>() {
 
     override val viewModel: SplashViewModel by viewModel()
 
@@ -23,7 +23,7 @@ class SplashActivity : BaseActivity<Boolean?, SplashViewState>() {
         }
     }
 
-    fun startMainActivity() {
+    private fun startMainActivity() {
         MainActivity.start(this)
         finish()
     }

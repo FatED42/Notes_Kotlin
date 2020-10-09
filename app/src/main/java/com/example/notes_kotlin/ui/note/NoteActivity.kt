@@ -8,7 +8,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.content.res.ResourcesCompat
 import com.example.notes_kotlin.R
 import com.example.notes_kotlin.data.entity.Note
 import com.example.notes_kotlin.extensions.getColorInt
@@ -18,7 +17,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NoteActivity: BaseActivity<NoteViewState.Data, NoteViewState>() {
+class NoteActivity: BaseActivity<NoteData>() {
 
     companion object{
         private const val NOTE_KEY = "note"
@@ -36,7 +35,7 @@ class NoteActivity: BaseActivity<NoteViewState.Data, NoteViewState>() {
 
     var color: Note.Color = Note.Color.WHITE
 
-    val textWatcher = object: TextWatcher {
+    private val textWatcher = object: TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             saveNote()
         }
@@ -58,7 +57,7 @@ class NoteActivity: BaseActivity<NoteViewState.Data, NoteViewState>() {
         initView()
     }
 
-    override fun renderData(data: NoteViewState.Data) {
+    override fun renderData(data: NoteData) {
         if (data.isDeleted) {
             finish()
             return
@@ -126,8 +125,8 @@ class NoteActivity: BaseActivity<NoteViewState.Data, NoteViewState>() {
     private fun deleteNote() {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.delete))
-            .setNegativeButton(R.string.delete_note_dialog_cancel) {dialog, which -> dialog.dismiss()}
-            .setPositiveButton(R.string.delete_note_dialog_ok) {dialog, which -> viewModel.deleteNote() }
+            .setNegativeButton(R.string.delete_note_dialog_cancel) { dialog, _ -> dialog.dismiss()}
+            .setPositiveButton(R.string.delete_note_dialog_ok) { _, _ -> viewModel.deleteNote() }
             .show()
     }
 }
